@@ -25,3 +25,6 @@ FROM gcr.io/distroless/static-debian12 AS production
 USER nonroot:nonroot
 COPY --from=build --chown=nonroot:nonroot /app /app
 ENTRYPOINT ["/app"]
+
+
+
