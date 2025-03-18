@@ -29,7 +29,7 @@ func NewServer() (*fiber.App, error) {
 	app := fiber.New()
 
 	app.Get("/", func(c fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+		return c.SendString("Matheus oppressor")
 	})
 
 	return app, nil
