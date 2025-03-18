@@ -18,11 +18,24 @@ func encryptAES(plaintext string, key []byte) ([]byte, []byte) {
 	return ciphertext, nonce
 }
 
-func decryptAES(ciphertext, key, nonce []byte) string {
-	block, _ := aes.NewCipher(key)
-	aesgcm, _ := cipher.NewGCM(block)
-	plaintext, _ := aesgcm.Open(nil, nonce, ciphertext, nil)
-	return string(plaintext)
+// DecryptAES descriptografa texto usando algoritmo AES-GCM
+func DecryptAES(ciphertext, key, nonce []byte) (string, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+	
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+	
+	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return "", err
+	}
+	
+	return string(plaintext), nil
 }
 
 func main() {
