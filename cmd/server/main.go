@@ -1,15 +1,22 @@
 package main
 
 import (
+	httpapi "key-haven-back/internal/http"
 	"log"
-	"net/http"
+
+	"github.com/joho/godotenv"
+	"go.uber.org/fx"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello, World!"))
-	})
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	app := fx.New(
+		httpapi.Module,
+	)
+
+	app.Run()
 }
