@@ -32,4 +32,6 @@ func main() {
 	app.Use(cors.New())
 	app.Use(requestid.New())
 	app.Use(recoverer.New())
+
+	log.Fatal(app.Listen(":5001"))
 }
