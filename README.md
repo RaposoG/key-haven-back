@@ -2,6 +2,10 @@
 
 Key-Haven is a secure and efficient password manager designed to store and manage your credentials safely. It provides encryption, easy access, and a user-friendly interface to help you manage your passwords securely.
 
+## Requirements
+- Go 1.24 or higher
+- Docker and Docker Compose for running the dependent services
+
 ## Features
 - **Secure Storage**: Uses strong encryption to store passwords safely.
 - **User Authentication**: Ensures only authorized users can access their vault.
@@ -22,25 +26,32 @@ To install Key-Haven, follow these steps:
    ```
 3. Install dependencies:
    ```sh
-   # Example for a Go-based backend
    go mod tidy
    ```
-4. Build and run the application:
+4. Start services required by the application:
    ```sh
-   go run main.go
+   docker-compose up -d
+   ```
+5. Build the application:
+   ```sh
+   mkdir -p ./bin && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api ./cmd/server
+   ```
+6. Run the application:
+   ```sh
+   ./bin/api
    ```
 
 ## Usage
-1. Do it.
-2. Then.
-3. Do that.
-4. Then.
+1. Start the application server
+2. Access the API endpoints for password management
+3. Use the encryption and decryption features for secure password storage
+4. Authenticate with your master password for added security
 
 ## Security Measures
-<!-- - **End-to-End Encryption**: Ensures that only you have access to your passwords.
-- **Master Password Protection**: Secure your vault with a strong master password.
-- **Two-Factor Authentication (2FA)**: Adds an extra layer of security.
-- **Data Backup**: Optional encrypted backups for recovery. -->
+- **End-to-End Encryption**: All passwords are encrypted using AES-GCM
+- **Master Password Protection**: Your vault is protected by a strong master password
+- **Secure Storage**: Sensitive data is never stored in plain text
+- **Hash Protection**: User authentication uses bcrypt for password hashing
 
 ## Roadmap
 - [ ] Add This
