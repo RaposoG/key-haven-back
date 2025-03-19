@@ -11,7 +11,7 @@ var TypeValidatorError validator.ValidationErrors
 
 func ResponseValidatorHandler(c fiber.Ctx, err error) error {
 	httpError := fiber.ErrUnprocessableEntity
-	return c.Status(httpError.Code).JSON(resp.HttpResponseError{
+	return c.Status(httpError.Code).JSON(resp.HTTPResponseError{
 		Massage: httpError.Message,
 		Err:     err.Error(),
 		Code:    httpError.Code,

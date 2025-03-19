@@ -7,17 +7,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func makeClaims(userId string, roles []string) jwt.MapClaims {
+func makeClaims(userID string, roles []string) jwt.MapClaims {
 	return jwt.MapClaims{
-		"sub":   userId,
+		"sub":   userID,
 		"roles": roles,
 		"exp":   time.Now().Add(time.Minute * 15).Unix(),
 	}
 }
 
-func CreateJwtToken(userId string, roles []string) (string, error) {
+func CreateJwtToken(userID string, roles []string) (string, error) {
 	secret := config.GetEnvOrDefault("JWT_SECRET", "secret")
-	claims := makeClaims(userId, roles)
+	claims := makeClaims(userID, roles)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }

@@ -1,6 +1,6 @@
 package res
 
-type HttpResponseError struct {
+type HTTPResponseError struct {
 	Massage string   `json:"massage"`
 	Err     string   `json:"error"`
 	Code    int      `json:"code"`
