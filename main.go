@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"key-haven-back/config"
 	"key-haven-back/internal/handler"
 	error_handler "key-haven-back/pkg/error"
@@ -54,7 +53,7 @@ func main() {
 			DarkMode: true,
 		})
 		if err != nil {
-			return fmt.Errorf("%v", err)
+			return fiber.NewError(fiber.StatusInternalServerError, "Fail to generate swagger API: "+err.Error())
 		}
 		return c.Type("html").SendString(htmlContent)
 	})

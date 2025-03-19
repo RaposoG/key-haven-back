@@ -37,7 +37,7 @@ code-quality: check-go-version
 
 # Run directly from source
 start: check-go-version
-	go run cmd/server/main.go
+	go run main.go
 
 # Build the application (default: linux)
 build: build-linux
