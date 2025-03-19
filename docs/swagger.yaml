@@ -1,0 +1,28 @@
+basePath: /
+definitions:
+  handler.ResponseSuccess:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API for Key Haven
+  title: Key Haven API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Simple get hello word
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSuccess'
+      summary: Get Hello
+      tags:
+      - Hello
+swagger: "2.0"

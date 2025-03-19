@@ -37,7 +37,7 @@ code-quality: check-go-version
 
 # Run directly from source
 start: check-go-version
-	go run cmd/server/main.go
+	go run main.go
 
 # Build the application (default: linux)
 build: build-linux
@@ -131,3 +131,5 @@ compose-setup-up:
 compose-setup-down:
 	docker compose -f ./test/setup/docker-compose.yml down
 
+swag:
+	swag init -g main.go
