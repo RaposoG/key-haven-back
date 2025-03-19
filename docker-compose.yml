@@ -1,19 +1,25 @@
 services:
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
     ports:
-      - "8081:8081"
-  db:
-    image: postgres
-    container_name: postgres
+      - "6379:6379"
     environment:
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - REDIS_PASSWORD=keyhaven
 
-volumes:
-  postgres_data:
+  mongodb:
+    container_name: mongodb
+    image: bitnami/mongodb:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_ROOT_USER=keyhaven
+      - MONGODB_ROOT_PASSWORD=keyhaven
+    volumes:
+      - ./.docker/mongodb:/bitnami/mongodb
+
+  redisinsight:
+    container_name: redisinsight
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"
