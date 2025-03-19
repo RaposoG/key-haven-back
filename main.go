@@ -5,7 +5,6 @@ import (
 	"key-haven-back/config"
 	"key-haven-back/internal/handler"
 	"key-haven-back/internal/infra/database"
-	"key-haven-back/internal/middleware"
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
@@ -40,7 +39,7 @@ func main() {
 	mongoClient := database.NewMongoDBClient(cfg)
 
 	defer func() {
-		if err := mongoClient.Disconnect(context.TODO); err != nil {
+		if err := mongoClient.Disconnect(context.TODO()); err != nil {
 			log.Printf("Failed to disconnect from MongoDB: %v", err)
 		}
 	}()
@@ -73,15 +72,6 @@ func main() {
 	// Authentication routes
 	router.RegisterRoutes(app, authHandler)
 	router.RegisterSwaggerRoutes(app)
-
-	// Protected routes
-	api := app.Group("/api", middleware.IsAuthenticatedHandler)
-
-	// Admin routes
-	admin := api.Group("/admin", middleware.HasRoleHandler("admin"))
-	admin.Get("/stats", func(c fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message": "Admin stats"})
-	})
 
 	// Start the server
 	log.Fatal(app.Listen(":8080"))

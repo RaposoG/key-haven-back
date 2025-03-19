@@ -40,7 +40,7 @@ func (r *SQLUserRepository) Create(ctx context.Context, user *model.User) error 
 	`
 
 	_, err = r.db.ExecContext(ctx, query,
-		user.ID, user.Email, user.Password, user.FirstName, user.CreatedAt, user.UpdatedAt)
+		user.ID, user.Email, user.Password, user.Name, user.CreatedAt, user.UpdatedAt)
 
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func (r *SQLUserRepository) FindByID(ctx context.Context, id string) (*model.Use
 
 	user := &model.User{}
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&user.ID, &user.Email, &user.Password, &user.FirstName, &user.CreatedAt, &user.UpdatedAt)
+		&user.ID, &user.Email, &user.Password, &user.Name, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -79,7 +79,7 @@ func (r *SQLUserRepository) FindByEmail(ctx context.Context, email string) (*mod
 
 	user := &model.User{}
 	err := r.db.QueryRowContext(ctx, query, email).Scan(
-		&user.ID, &user.Email, &user.Password, &user.FirstName, &user.CreatedAt, &user.UpdatedAt)
+		&user.ID, &user.Email, &user.Password, &user.Name, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

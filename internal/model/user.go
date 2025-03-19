@@ -10,7 +10,7 @@ type User struct {
 	ID                  string    `json:"id" bson:"_id,omitempty"`
 	Email               string    `json:"email" bson:"email"`
 	Password            string    `json:"-" bson:"password"`
-	FirstName           string    `json:"first_name" bson:"first_name"`
+	Name                string    `json:"name" bson:"name"`
 	CreatedAt           time.Time `json:"created_at" bson:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at" bson:"updated_at"`
 	LastLoginAt         time.Time `json:"last_login_at,omitempty" bson:"last_login_at"`
@@ -18,9 +18,9 @@ type User struct {
 }
 
 type CreateUserRequest struct {
-	Email     string `json:"email" validate:"required,email"`
-	Password  string `json:"password" validate:"required,min=12"`
-	FirstName string `json:"firstName" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=12"`
+	Name     string `json:"name" validate:"required"`
 }
 
 type LoginRequest struct {
@@ -38,7 +38,7 @@ func NewUser(req *CreateUserRequest) *User {
 	return &User{
 		ID:        uuid.New().String(),
 		Email:     req.Email,
-		FirstName: req.FirstName,
+		Name:      req.Name,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
