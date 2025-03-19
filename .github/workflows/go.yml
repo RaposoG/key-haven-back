@@ -58,7 +58,7 @@ jobs:
       run: go test -v ./test/unittests/...
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: binaries
         path: ./bin/
