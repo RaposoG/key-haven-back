@@ -32,11 +32,4 @@ func main() {
 	app.Use(cors.New())
 	app.Use(requestid.New())
 	app.Use(recoverer.New())
-
-	// infra := infra.NewInfra(
-	// 	database.NewRedisClient(cfg),
-	// 	database.NewMongoDBClient(cfg),
-	// )
-
-	log.Fatal(app.Listen(":5000"))
 }
