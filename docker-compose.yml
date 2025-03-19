@@ -1,0 +1,25 @@
+services:
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=keyhaven
+
+  mongodb:
+    container_name: mongodb
+    image: bitnami/mongodb:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_ROOT_USER=keyhaven
+      - MONGODB_ROOT_PASSWORD=keyhaven
+    volumes:
+      - ./.docker/mongodb:/bitnami/mongodb
+
+  redisinsight:
+    container_name: redisinsight
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"

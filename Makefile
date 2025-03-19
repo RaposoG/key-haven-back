@@ -130,3 +130,4 @@ compose-setup-up:
 
 compose-setup-down:
 	docker compose -f ./test/setup/docker-compose.yml down
+
