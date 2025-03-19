@@ -54,6 +54,7 @@ jobs:
       run: |
         CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api.exe ./cmd/server
 
-    - name: Run Unit Tests
-      run: go test -v ./test/unittests/...
+    ## Uncomment the following lines to run unit tests once the tests are written
+    # - name: Run Unit Tests
+    #   run: go test -v ./test/unittests/...
 
