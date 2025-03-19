@@ -1,8 +1,59 @@
 basePath: /
 definitions:
-  handler.ResponseSuccess:
+  handler.ErrorResponse:
     properties:
       message:
+        type: string
+    type: object
+  handler.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      password:
+        minLength: 12
+        type: string
+    required:
+    - email
+    - firstName
+    - password
+    type: object
+  model.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  model.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_login_at:
+        type: string
+      updated_at:
         type: string
     type: object
 host: localhost:8080
@@ -12,17 +63,91 @@ info:
   title: Key Haven API
   version: "1.0"
 paths:
-  /:
-    get:
-      description: Simple get hello word
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns a token
+      parameters:
+      - description: User login data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.ResponseSuccess'
-      summary: Get Hello
+            $ref: '#/definitions/model.LoginResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Invalid email or password
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: User login
       tags:
-      - Hello
+      - Auth
+  /auth/logout:
+    post:
+      description: Logs out the user by clearing the authentication cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.MessageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: User logout
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "409":
+          description: Email already in use
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - Auth
 swagger: "2.0"
