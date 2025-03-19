@@ -1,22 +1,42 @@
 package main
 
 import (
-	httpapi "key-haven-back/internal/http"
+	"key-haven-back/config"
+	error_handler "key-haven-back/pkg/error"
+	"key-haven-back/pkg/validator"
 	"log"
 
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	recoverer "github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/gofiber/fiber/v3/middleware/requestid"
 	"github.com/joho/godotenv"
-	"go.uber.org/fx"
 )
 
 func main() {
-	err := godotenv.Load(".env")
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error loading .env file")
 	}
 
-	app := fx.New(
-		httpapi.Module,
-	)
+	cfg := &config.Config{}
+	config.LoadConfig(cfg)
 
-	app.Run()
+	fiberConfig := fiber.Config{
+		StructValidator: validator.NewStructValidator(),
+		ErrorHandler:    error_handler.GlobaltErrorHandler,
+	}
+
+	app := fiber.New(fiberConfig)
+
+	app.Use(cors.New())
+	app.Use(requestid.New())
+	app.Use(recoverer.New())
+
+	// infra := infra.NewInfra(
+	// 	database.NewRedisClient(cfg),
+	// 	database.NewMongoDBClient(cfg),
+	// )
+
+	log.Fatal(app.Listen(":5000"))
 }
