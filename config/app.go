@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	MongodbUrl string `required:"true" env:"MONGODB_URL"`
+	MongodbURL string `required:"true" env:"MONGODB_URL"`
 
 	RedisHost     string `required:"true" env:"REDIS_HOST"`
 	RedisPort     string `required:"true" env:"REDIS_PORT"`

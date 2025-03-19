@@ -1,5 +1,5 @@
 package res
 
-type HttpMessage struct {
+type HTTPMessage struct {
 	Message string `json:"message"`
 }

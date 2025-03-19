@@ -11,9 +11,9 @@ import (
 )
 
 func NewMongoDBClient(cfg *config.Config) *mongo.Client {
-	mongodbUrl := os.Getenv(cfg.MongodbUrl)
+	mongodbURL := os.Getenv(cfg.MongodbURL)
 	ctx := context.Background()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongodbUrl))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongodbURL))
 	if err != nil {
 		log.Panicf("Error connecting to MongoDB: %v", err)
 	}
