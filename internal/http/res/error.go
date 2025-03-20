@@ -1,7 +1,7 @@
 package res
 
 type HTTPResponseError struct {
-	Massage string   `json:"massage"`
+	Message string   `json:"message"`
 	Err     string   `json:"error"`
 	Code    int      `json:"code"`
 	Causes  []Causes `json:"causes,omitempty"`

@@ -37,6 +37,7 @@ code-quality: check-go-version
 
 # Run directly from source
 start: check-go-version
+	make swag
 	go run main.go
 
 # Build the application (default: linux)

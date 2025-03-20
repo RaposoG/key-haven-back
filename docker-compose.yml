@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   redis:
     container_name: redis
@@ -7,8 +6,6 @@ services:
       - "6379:6379"
     environment:
       - REDIS_PASSWORD=keyhaven
-    networks:
-      - keyhaven-network
 
   mongodb:
     image: ${MONGODB_IMAGE:-bitnami/mongodb:latest}
@@ -17,7 +14,7 @@ services:
       - "27017:27017"
     environment:
       - MONGODB_ROOT_USER=keyhaven
-      - MONGODB_ROOT_PASSWORD=keyhave
+      - MONGODB_ROOT_PASSWORD=keyhaven
       - MONGODB_DATABASE=keyhaven
     volumes:
       - ./.docker/mongodb:/bitnami/mongodb
@@ -28,7 +25,3 @@ services:
     image: redis/redisinsight:latest
     ports:
       - "5540:5540"
-
-networks:
-  keyhaven-network:
-    driver: bridge

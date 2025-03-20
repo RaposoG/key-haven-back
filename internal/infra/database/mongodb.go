@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func NewMongoDBClient(cfg *config.Config) *mongo.Client {
+func NewMongoDBClient(cfg *config.Config) MongoDBClient {
 	// Use the value directly from the config
 	mongodbURL := cfg.MongodbURL
 

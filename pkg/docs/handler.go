@@ -11,7 +11,7 @@ import (
 )
 
 type Provider struct {
-	Url  string
+	URL  string
 	Name string
 }
 
@@ -40,16 +40,16 @@ func RegisterDocsRouter(app *fiber.App) {
 		}
 
 		provider := &Provider{
-			Url:  "http://localhost:8080/public/openapi.json",
+			URL:  "http://localhost:8080/public/openapi.json",
 			Name: name,
 		}
 
-		var bufferHtml bytes.Buffer
-		if err := tmpl.Execute(&bufferHtml, provider); err != nil {
+		var bufferHTML bytes.Buffer
+		if err := tmpl.Execute(&bufferHTML, provider); err != nil {
 			fmt.Println("Execute Replace Text")
 			return fiber.NewError(fiber.StatusInternalServerError, "Fail to generate docs: "+err.Error())
 		}
 
-		return ctx.Type("html").SendString(bufferHtml.String())
+		return ctx.Type("html").SendString(bufferHTML.String())
 	})
 }

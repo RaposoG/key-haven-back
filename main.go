@@ -9,7 +9,7 @@ import (
 	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
 	"key-haven-back/pkg/docs"
-	error_handler "key-haven-back/pkg/error"
+	errorhandler "key-haven-back/pkg/error"
 	"key-haven-back/pkg/validator"
 	"log"
 
@@ -49,7 +49,7 @@ func main() {
 	usersCollection := mongoClient.Database("key-haven").Collection("users")
 
 	// Initialize repositories
-	userRepo := repository.NewMongoUserRepository(usersCollection)
+	userRepo := repository.NewUserRepository(usersCollection)
 
 	// Initialize services
 	userService := service.NewUserService(userRepo)
@@ -60,7 +60,7 @@ func main() {
 
 	fiberConfig := fiber.Config{
 		StructValidator: validator.NewStructValidator(),
-		ErrorHandler:    error_handler.GlobaltErrorHandler,
+		ErrorHandler:    errorhandler.GlobalErrorHandler,
 	}
 
 	app := fiber.New(fiberConfig)
@@ -68,7 +68,7 @@ func main() {
 	app.Use(requestid.New())
 	app.Use(recoverer.New())
 
-	app.Get("/health", handler.Health)
+	app.Get("/", handler.Health)
 
 	// Authentication routes
 	router.RegisterRoutes(app, authHandler)
