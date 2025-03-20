@@ -24,4 +24,5 @@ CMD go test -v ./test/unittests/...
 FROM gcr.io/distroless/static-debian12 AS production
 USER nonroot:nonroot
 COPY --from=build --chown=nonroot:nonroot /app /app
+COPY --from=build --chown=nonroot:nonroot /docs /docs
 ENTRYPOINT ["/app"]
