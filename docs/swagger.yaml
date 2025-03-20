@@ -5,23 +5,22 @@ definitions:
       message:
         type: string
     type: object
-  handler.MessageResponse:
+  handler.SuccessResponse:
     properties:
-      message:
-        type: string
+      data: {}
     type: object
   model.CreateUserRequest:
     properties:
       email:
         type: string
-      firstName:
+      name:
         type: string
       password:
         minLength: 12
         type: string
     required:
     - email
-    - firstName
+    - name
     - password
     type: object
   model.LoginRequest:
@@ -33,28 +32,6 @@ definitions:
     required:
     - email
     - password
-    type: object
-  model.LoginResponse:
-    properties:
-      token:
-        type: string
-      user:
-        $ref: '#/definitions/model.User'
-    type: object
-  model.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      first_name:
-        type: string
-      id:
-        type: string
-      last_login_at:
-        type: string
-      updated_at:
-        type: string
     type: object
 host: localhost:8080
 info:
@@ -81,7 +58,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.LoginResponse'
+            $ref: '#/definitions/handler.SuccessResponse'
         "400":
           description: Invalid request body
           schema:
@@ -106,7 +83,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.MessageResponse'
+            $ref: '#/definitions/handler.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
@@ -134,7 +111,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.User'
+            $ref: '#/definitions/handler.SuccessResponse'
         "400":
           description: Invalid request body
           schema:

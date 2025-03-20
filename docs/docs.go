@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.LoginResponse"
+                            "$ref": "#/definitions/handler.SuccessResponse"
                         }
                     },
                     "400": {
@@ -86,7 +86,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.MessageResponse"
+                            "$ref": "#/definitions/handler.SuccessResponse"
                         }
                     },
                     "401": {
@@ -126,7 +126,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/handler.SuccessResponse"
                         }
                     },
                     "400": {
@@ -160,26 +160,24 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.MessageResponse": {
+        "handler.SuccessResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
-                }
+                "data": {}
             }
         },
         "model.CreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
-                "firstName",
+                "name",
                 "password"
             ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "firstName": {
+                "name": {
                     "type": "string"
                 },
                 "password": {
@@ -199,40 +197,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.User"
-                }
-            }
-        },
-        "model.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "last_login_at": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
