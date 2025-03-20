@@ -8,6 +8,7 @@ import (
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
+	"key-haven-back/pkg/docs"
 	error_handler "key-haven-back/pkg/error"
 	"key-haven-back/pkg/validator"
 	"log"
@@ -72,6 +73,7 @@ func main() {
 	// Authentication routes
 	router.RegisterRoutes(app, authHandler)
 	router.RegisterSwaggerRoutes(app)
+	docs.RegisterDocsRouter(app)
 
 	// Start the server
 	log.Fatal(app.Listen(":8080"))

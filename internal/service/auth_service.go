@@ -4,7 +4,7 @@ import (
 	"context"
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
-	"key-haven-back/pkg/crypto"
+	"key-haven-back/pkg/secret"
 	"time"
 )
 
@@ -36,12 +36,12 @@ func (s *authService) Login(ctx context.Context, request *model.LoginRequest) (*
 		return nil, err
 	}
 
-	valid, err := crypto.VerifyPassword(user.Password, request.Password)
+	valid, err := secret.VerifyPassword(user.Password, request.Password)
 	if err != nil || !valid {
 		return nil, repository.ErrInvalidCredentials
 	}
 
-	token, err := crypto.GenerateToken(user.ID, user.Email, 24*time.Hour)
+	token, err := secret.GenerateToken(user.ID, user.Email, 24*time.Hour)
 	if err != nil {
 		return nil, err
 	}

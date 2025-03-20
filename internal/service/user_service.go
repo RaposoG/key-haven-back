@@ -4,7 +4,7 @@ import (
 	"context"
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
-	"key-haven-back/pkg/crypto"
+	"key-haven-back/pkg/secret"
 )
 
 // UserService defines the interface for user-related operations
@@ -33,7 +33,7 @@ func (s *userService) CreateUser(ctx context.Context, request *model.CreateUserR
 	user := model.NewUser(request)
 
 	// Hash the password
-	hashedPassword, err := crypto.HashPassword(request.Password)
+	hashedPassword, err := secret.HashPassword(request.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (*model.
 
 // UpdatePassword updates a user's password
 func (s *userService) UpdatePassword(ctx context.Context, userID, password string) error {
-	hashedPassword, err := crypto.HashPassword(password)
+	hashedPassword, err := secret.HashPassword(password)
 	if err != nil {
 		return err
 	}
