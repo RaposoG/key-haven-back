@@ -11,32 +11,17 @@ services:
       - keyhaven-network
 
   mongodb:
-    image: mongo
+    image: ${MONGODB_IMAGE:-bitnami/mongodb:latest}
     container_name: mongodb
-    # image: bitnami/mongodb:latest
-    platform: linux/arm64
     ports:
       - "27017:27017"
     environment:
       - MONGODB_ROOT_USER=keyhaven
-      - MONGODB_ROOT_PASSWORD=keyhaven
+      - MONGODB_ROOT_PASSWORD=keyhave
+      - MONGODB_DATABASE=keyhaven
     volumes:
       - ./.docker/mongodb:/bitnami/mongodb
-    networks:
-      - keyhaven-network
-
-  api:
-    container_name: api
-    image: my-app
-    build:
-      dockerfile: Dockerfile
-      target: production
-    ports:
-      - "8080:8080"
-    networks:
-      - keyhaven-network
-    env_file:
-      - .env
+    platform: ${MONGODB_PLATFORM:-linux/amd64}
 
   redisinsight:
     container_name: redisinsight

@@ -26,5 +26,4 @@ FROM gcr.io/distroless/static-debian12 AS production
 USER nonroot:nonroot
 COPY --from=build --chown=nonroot:nonroot /app /app
 COPY --from=build --chown=nonroot:nonroot /src/docs /docs
-EXPOSE 8080
 ENTRYPOINT ["/app"]
