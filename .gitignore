@@ -12,6 +12,8 @@
 *.so
 *.dylib
 api
+vcs.xml
+modules.xml
 # Test binary, built with `go test -c`
 *.test
 
