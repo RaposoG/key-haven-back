@@ -5,6 +5,11 @@ definitions:
       message:
         type: string
     type: object
+  handler.ResponseSuccess:
+    properties:
+      message:
+        type: string
+    type: object
   handler.SuccessResponse:
     properties:
       data: {}
@@ -40,6 +45,21 @@ info:
   title: Key Haven API
   version: "1.0"
 paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Check if the service is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSuccess'
+      summary: Check if the service is healthy
+      tags:
+      - health
   /auth/login:
     post:
       consumes:
