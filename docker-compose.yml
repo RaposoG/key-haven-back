@@ -9,10 +9,9 @@ services:
       - REDIS_PASSWORD=keyhaven
 
   mongodb:
-    image: mongo
     container_name: mongodb
-    # image: bitnami/mongodb:latest
-    platform: linux/arm64
+    image: bitnami/mongodb:latest
+    #platform: linux/arm64
     ports:
       - "27017:27017"
     environment:

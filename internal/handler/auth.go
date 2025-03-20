@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/service"
@@ -69,7 +70,7 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 
 	user, err := h.authService.Register(c.Context(), &req)
 	if err != nil {
-		if err == repository.ErrEmailAlreadyUsed {
+		if errors.Is(err, repository.ErrEmailAlreadyUsed) {
 			return handleError(c, fiber.StatusConflict, "Email already in use")
 		}
 		return handleError(c, fiber.StatusInternalServerError, "Failed to register user")
@@ -98,7 +99,7 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 
 	response, err := h.authService.Login(c.Context(), &req)
 	if err != nil {
-		if err == repository.ErrInvalidCredentials {
+		if errors.Is(err, repository.ErrInvalidCredentials) {
 			return handleError(c, fiber.StatusUnauthorized, "Invalid email or password")
 		}
 		return handleError(c, fiber.StatusInternalServerError, "Failed to process login")

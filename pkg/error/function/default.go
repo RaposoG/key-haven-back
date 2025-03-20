@@ -9,7 +9,7 @@ import (
 func ResponseInternalServerErrorHandler(c fiber.Ctx, err error) error {
 	httpError := fiber.ErrInternalServerError
 	return c.Status(httpError.Code).JSON(resp.HTTPResponseError{
-		Massage: httpError.Message,
+		Message: httpError.Message,
 		Err:     err.Error(),
 		Code:    httpError.Code,
 		Causes:  nil,

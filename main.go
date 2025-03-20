@@ -8,7 +8,7 @@ import (
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
-	error_handler "key-haven-back/pkg/error"
+	errorhandler "key-haven-back/pkg/error"
 	"key-haven-back/pkg/validator"
 	"log"
 
@@ -59,7 +59,7 @@ func main() {
 
 	fiberConfig := fiber.Config{
 		StructValidator: validator.NewStructValidator(),
-		ErrorHandler:    error_handler.GlobaltErrorHandler,
+		ErrorHandler:    errorhandler.GlobalErrorHandler,
 	}
 
 	app := fiber.New(fiberConfig)
