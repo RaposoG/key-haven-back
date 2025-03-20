@@ -9,6 +9,7 @@ RUN go mod download
 COPY ./ ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app main.go
 
+
 # Test
 FROM golang:${GO_VERSION}-alpine AS tests
 ENV CI "1"
@@ -25,4 +26,5 @@ FROM gcr.io/distroless/static-debian12 AS production
 USER nonroot:nonroot
 COPY --from=build --chown=nonroot:nonroot /app /app
 COPY --from=build --chown=nonroot:nonroot /src/docs /docs
+EXPOSE 8080
 ENTRYPOINT ["/app"]

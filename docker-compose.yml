@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   redis:
     container_name: redis
@@ -7,6 +7,8 @@ services:
       - "6379:6379"
     environment:
       - REDIS_PASSWORD=keyhaven
+    networks:
+      - keyhaven-network
 
   mongodb:
     image: mongo
@@ -20,9 +22,28 @@ services:
       - MONGODB_ROOT_PASSWORD=keyhaven
     volumes:
       - ./.docker/mongodb:/bitnami/mongodb
+    networks:
+      - keyhaven-network
+
+  api:
+    container_name: api
+    image: my-app
+    build:
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8080:8080"
+    networks:
+      - keyhaven-network
+    env_file:
+      - .env
 
   redisinsight:
     container_name: redisinsight
     image: redis/redisinsight:latest
     ports:
       - "5540:5540"
+
+networks:
+  keyhaven-network:
+    driver: bridge
