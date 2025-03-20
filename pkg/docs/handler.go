@@ -44,12 +44,12 @@ func RegisterDocsRouter(app *fiber.App) {
 			Name: name,
 		}
 
-		var bufferHtml bytes.Buffer
-		if err := tmpl.Execute(&bufferHtml, provider); err != nil {
+		var bufferHTML bytes.Buffer
+		if err := tmpl.Execute(&bufferHTML, provider); err != nil {
 			fmt.Println("Execute Replace Text")
 			return fiber.NewError(fiber.StatusInternalServerError, "Fail to generate docs: "+err.Error())
 		}
 
-		return ctx.Type("html").SendString(bufferHtml.String())
+		return ctx.Type("html").SendString(bufferHTML.String())
 	})
 }
