@@ -87,7 +87,10 @@ func TestAuthHandler_Register(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusCreated, resp.StatusCode)
 		var response SuccessResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 
 		responseUser, ok := response.Data.(map[string]interface{})
 		assert.True(t, ok)
@@ -115,7 +118,11 @@ func TestAuthHandler_Register(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusBadRequest, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
+
 		assert.Equal(t, "Invalid request body", response.Message)
 	})
 
@@ -147,7 +154,10 @@ func TestAuthHandler_Register(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusConflict, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Email already in use", response.Message)
 
 		mockService.AssertExpectations(t)
@@ -180,7 +190,10 @@ func TestAuthHandler_Register(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusInternalServerError, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Failed to register user", response.Message)
 
 		mockService.AssertExpectations(t)
@@ -223,7 +236,10 @@ func TestAuthHandler_Login(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusOK, resp.StatusCode)
 		var response SuccessResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 
 		responseData, ok := response.Data.(map[string]interface{})
 		assert.True(t, ok)
@@ -251,7 +267,10 @@ func TestAuthHandler_Login(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusBadRequest, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Invalid request body", response.Message)
 	})
 
@@ -281,7 +300,10 @@ func TestAuthHandler_Login(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusUnauthorized, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Invalid email or password", response.Message)
 
 		mockService.AssertExpectations(t)
@@ -313,7 +335,10 @@ func TestAuthHandler_Login(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusInternalServerError, resp.StatusCode)
 		var response ErrorResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Failed to process login", response.Message)
 
 		mockService.AssertExpectations(t)
@@ -336,7 +361,10 @@ func TestAuthHandler_Logout(t *testing.T) {
 		// Assert
 		assert.Equal(t, fiber.StatusOK, resp.StatusCode)
 		var response SuccessResponse
-		json.NewDecoder(resp.Body).Decode(&response)
+		err := json.NewDecoder(resp.Body).Decode(&response)
+		if err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
+		}
 		assert.Equal(t, "Logged out successfully", response.Data)
 
 		// Check cookie is cleared
