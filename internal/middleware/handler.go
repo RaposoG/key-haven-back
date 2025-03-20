@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"key-haven-back/pkg/crypto"
+	"key-haven-back/pkg/secret"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -23,9 +23,9 @@ func IsAuthenticatedHandler(c fiber.Ctx) error {
 	}
 
 	// Validate token
-	claims, err := crypto.ValidateToken(tokenJwt)
+	claims, err := secret.ValidateToken(tokenJwt)
 	if err != nil {
-		if err == crypto.ErrTokenExpired {
+		if err == secret.ErrTokenExpired {
 			return c.Status(401).JSON(fiber.Map{
 				"message": "Token expired",
 			})
