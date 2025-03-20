@@ -11,7 +11,7 @@ import (
 )
 
 type Provider struct {
-	Url  string
+	URL  string
 	Name string
 }
 
@@ -40,7 +40,7 @@ func RegisterDocsRouter(app *fiber.App) {
 		}
 
 		provider := &Provider{
-			Url:  "http://localhost:8080/public/openapi.json",
+			URL:  "http://localhost:8080/public/openapi.json",
 			Name: name,
 		}
 
