@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"key-haven-back/config"
 	"key-haven-back/internal/handler"
+	"key-haven-back/internal/infra/database"
+	"key-haven-back/internal/repository"
+	"key-haven-back/internal/router"
+	"key-haven-back/internal/service"
 	error_handler "key-haven-back/pkg/error"
 	"key-haven-back/pkg/validator"
 	"log"
 
 	_ "key-haven-back/docs"
 
-	"github.com/MarceloPetrucio/go-scalar-api-reference"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	recoverer "github.com/gofiber/fiber/v3/middleware/recover"
@@ -25,11 +29,33 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Warning: Error loading .env file")
 	}
 
 	cfg := &config.Config{}
 	config.LoadConfig(cfg)
+
+	// Initialize database clients
+	mongoClient := database.NewMongoDBClient(cfg)
+
+	defer func() {
+		if err := mongoClient.Disconnect(context.TODO()); err != nil {
+			log.Printf("Failed to disconnect from MongoDB: %v", err)
+		}
+	}()
+
+	// Get the users collection from MongoDB
+	usersCollection := mongoClient.Database("key-haven").Collection("users")
+
+	// Initialize repositories
+	userRepo := repository.NewMongoUserRepository(usersCollection)
+
+	// Initialize services
+	userService := service.NewUserService(userRepo)
+	authService := service.NewAuthService(userService)
+
+	// Initialize handlers
+	authHandler := handler.NewAuthHandler(authService)
 
 	fiberConfig := fiber.Config{
 		StructValidator: validator.NewStructValidator(),
@@ -43,20 +69,10 @@ func main() {
 
 	app.Get("/health", handler.Health)
 
-	app.Get("/reference", func(c fiber.Ctx) error {
-		htmlContent, err := scalar.ApiReferenceHTML(&scalar.Options{
-			// SpecURL: "https://generator3.swagger.io/openapi.json",// allow external URL or local path file
-			SpecURL: "./docs/swagger.json",
-			CustomOptions: scalar.CustomOptions{
-				PageTitle: "API Reference",
-			},
-			DarkMode: true,
-		})
-		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, "Fail to generate swagger API: "+err.Error())
-		}
-		return c.Type("html").SendString(htmlContent)
-	})
+	// Authentication routes
+	router.RegisterRoutes(app, authHandler)
+	router.RegisterSwaggerRoutes(app)
 
+	// Start the server
 	log.Fatal(app.Listen(":8080"))
 }

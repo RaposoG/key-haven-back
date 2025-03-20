@@ -45,28 +45,28 @@ build: build-linux
 # Build for Linux
 build-linux: check-go-version code-quality
 	mkdir -p ./bin
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api ./cmd/server
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api .
 	@echo "Linux build complete: ./bin/api"
 	@echo "To install system-wide, run: sudo cp ./bin/api /usr/bin/"
 
 # Build for macOS (Intel)
 build-darwin-amd64: check-go-version code-quality
 	mkdir -p ./bin
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api ./cmd/server
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api .
 	@echo "macOS (Intel) build complete: ./bin/api"
 	@echo "To install to your user bin, run: mkdir -p ~/bin && cp ./bin/api ~/bin/"
 
 # Build for macOS (Apple Silicon)
 build-darwin-arm64: check-go-version code-quality
 	mkdir -p ./bin
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o ./bin/api ./cmd/server
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o ./bin/api .
 	@echo "macOS (Apple Silicon) build complete: ./bin/api"
 	@echo "To install to your user bin, run: mkdir -p ~/bin && cp ./bin/api ~/bin/"
 
 # Build for Windows
 build-windows: check-go-version code-quality
 	mkdir -p ./bin
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api.exe ./cmd/server
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ./bin/api.exe .
 	@echo "Windows build complete: ./bin/api.exe"
 
 # Force build (ignoring Go version)
@@ -74,7 +74,7 @@ build-force:
 	@echo "Force building (ignoring Go version requirements)..."
 	@echo "Note: This might fail if your Go version is incompatible with dependencies"
 	mkdir -p ./bin
-	GO111MODULE=on GOPROXY=direct go build -mod=mod -ldflags="-s -w" -o ./bin/api ./cmd/server
+	GO111MODULE=on GOPROXY=direct go build -mod=mod -ldflags="-s -w" -o ./bin/api .
 	@echo "Force build complete: ./bin/api (version constraints ignored)"
 
 # Run the built binary
