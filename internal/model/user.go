@@ -36,10 +36,11 @@ type LoginResponse struct {
 func NewUser(req *CreateUserRequest) *User {
 	now := time.Now()
 	return &User{
-		ID:        uuid.New().String(),
-		Email:     req.Email,
-		Name:      req.Name,
-		CreatedAt: now,
-		UpdatedAt: now,
+		ID:          uuid.New().String(),
+		Email:       req.Email,
+		Name:        req.Name,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		LastLoginAt: now,
 	}
 }

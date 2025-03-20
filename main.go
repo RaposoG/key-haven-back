@@ -48,7 +48,7 @@ func main() {
 	usersCollection := mongoClient.Database("key-haven").Collection("users")
 
 	// Initialize repositories
-	userRepo := repository.NewMongoUserRepository(usersCollection)
+	userRepo := repository.NewUserRepository(usersCollection)
 
 	// Initialize services
 	userService := service.NewUserService(userRepo)
@@ -67,7 +67,7 @@ func main() {
 	app.Use(requestid.New())
 	app.Use(recoverer.New())
 
-	app.Get("/health", handler.Health)
+	app.Get("/", handler.Health)
 
 	// Authentication routes
 	router.RegisterRoutes(app, authHandler)
