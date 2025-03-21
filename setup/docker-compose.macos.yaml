@@ -1,5 +1,4 @@
 services:
-  
   mongodb:
     image: mongo
     container_name: mongodb
@@ -11,4 +10,4 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=keyhaven
       - MONGO_INITDB_DATABASE=keyhaven
     volumes:
-      - ./.docker/mongodb:/bitnami/mongodb
+      - ./.docker/mongodb:/data/db
