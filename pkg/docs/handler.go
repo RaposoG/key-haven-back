@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"math/rand"
 	"os"
 	"path"
 
@@ -11,8 +12,14 @@ import (
 )
 
 type Provider struct {
-	URL  string
-	Name string
+	URL   string
+	Name  string
+	Theme string
+}
+
+func randomTheme() string {
+	themes := []string{"bluePlanet", "deepSpace", "kepler"}
+	return themes[rand.Intn(len(themes))]
 }
 
 func RegisterDocsRouter(app *fiber.App) {
@@ -21,7 +28,7 @@ func RegisterDocsRouter(app *fiber.App) {
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, "Fail to get current directory: "+err.Error())
 		}
-		filename := path.Join(dir, "pkg", "docs", "swagger.json")
+		filename := path.Join(dir, "docs", "swagger.json")
 		return ctx.SendFile(filename)
 	})
 
@@ -32,6 +39,7 @@ func RegisterDocsRouter(app *fiber.App) {
 		}
 
 		name := ctx.Query("name", "scalar")
+
 		filename := path.Join(dir, "pkg", "docs", fmt.Sprintf("%s.html", name))
 		tmpl, err := template.ParseFiles(filename)
 		if err != nil {
@@ -40,8 +48,9 @@ func RegisterDocsRouter(app *fiber.App) {
 		}
 
 		provider := &Provider{
-			URL:  "http://localhost:8080/public/openapi.json",
-			Name: name,
+			URL:   "http://localhost:8080/public/openapi.json",
+			Name:  name,
+			Theme: randomTheme(),
 		}
 
 		var bufferHTML bytes.Buffer
@@ -52,4 +61,11 @@ func RegisterDocsRouter(app *fiber.App) {
 
 		return ctx.Type("html").SendString(bufferHTML.String())
 	})
+}
+
+type RegisterDocsRouterFunc func(app *fiber.App)
+
+// Providers para o Fx
+func RegisterDocsRouterFuncProvider() RegisterDocsRouterFunc {
+	return RegisterDocsRouter
 }
