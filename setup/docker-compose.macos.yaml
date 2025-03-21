@@ -1,0 +1,13 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    platform: linux/arm64
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=keyhaven
+      - MONGO_INITDB_ROOT_PASSWORD=keyhaven
+      - MONGO_INITDB_DATABASE=keyhaven
+    volumes:
+      - ./.docker/mongodb:/data/db

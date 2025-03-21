@@ -1,0 +1,12 @@
+services:
+  mongodb:
+    image: bitnami/mongodb:latest
+    container_name: mongodb
+    ports:
+     - "27017:27017"
+    environment:
+      - MONGODB_ROOT_USER=keyhaven
+      - MONGODB_ROOT_PASSWORD=keyhaven
+      - MONGODB_DATABASE=keyhaven
+    volumes:
+      - ./.docker/mongodb:/bitnami/mongodb
