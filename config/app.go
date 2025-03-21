@@ -11,6 +11,8 @@ type Config struct {
 	RedisHost     string `required:"true" env:"REDIS_HOST"`
 	RedisPort     string `required:"true" env:"REDIS_PORT"`
 	RedisPassword string `required:"true" env:"REDIS_PASSWORD"`
+
+	Port string `required:"true" env:"PORT"`
 }
 
 func GetEnvOrDefault(key string, defaultValue string) string {
@@ -41,4 +43,10 @@ func LoadConfig(cfg interface{}) {
 			panic("Missing required environment variable: " + envVar)
 		}
 	}
+}
+
+func NewConfig() *Config {
+	cfg := &Config{}
+	LoadConfig(cfg)
+	return cfg
 }

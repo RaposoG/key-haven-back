@@ -17,6 +17,7 @@ type authService struct {
 	userService UserService
 }
 
+// NewAuthService creates a new instance of AuthService
 func NewAuthService(userService UserService) AuthService {
 	return &authService{
 		userService: userService,

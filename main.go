@@ -1,80 +1,41 @@
 package main
 
 import (
-	"context"
 	"key-haven-back/config"
-	"key-haven-back/internal/handler"
 	"key-haven-back/internal/infra/database"
 	"key-haven-back/internal/repository"
-	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
-	"key-haven-back/pkg/docs"
-	errorhandler "key-haven-back/pkg/error"
-	"key-haven-back/pkg/validator"
 	"log"
 
 	_ "key-haven-back/docs"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/cors"
-	recoverer "github.com/gofiber/fiber/v3/middleware/recover"
-	"github.com/gofiber/fiber/v3/middleware/requestid"
 	"github.com/joho/godotenv"
+	"go.uber.org/fx"
+
+	httpapi "key-haven-back/internal/http"
 )
 
-// @title Key Haven API
-// @version 1.0
-// @description This is the API for Key Haven
-// @host localhost:8080
-// @BasePath /
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("Warning: Error loading .env file")
 	}
 
-	cfg := &config.Config{}
-	config.LoadConfig(cfg)
+	app := fx.New(
+		// Core modules
+		config.Module,
+		database.Module,
 
-	// Initialize database clients
-	mongoClient := database.NewMongoDBClient(cfg)
+		// Repository modules
+		repository.Module,
 
-	defer func() {
-		if err := mongoClient.Disconnect(context.TODO()); err != nil {
-			log.Printf("Failed to disconnect from MongoDB: %v", err)
-		}
-	}()
+		// Service modules
+		service.Module,
 
-	// Get the users collection from MongoDB
-	usersCollection := mongoClient.Database("key-haven").Collection("users")
+		// HTTP API modules
+		httpapi.Module,
+	)
 
-	// Initialize repositories
-	userRepo := repository.NewUserRepository(usersCollection)
+	app.Run()
 
-	// Initialize services
-	userService := service.NewUserService(userRepo)
-	authService := service.NewAuthService(userService)
-
-	// Initialize handlers
-	authHandler := handler.NewAuthHandler(authService)
-
-	fiberConfig := fiber.Config{
-		StructValidator: validator.NewStructValidator(),
-		ErrorHandler:    errorhandler.GlobalErrorHandler,
-	}
-
-	app := fiber.New(fiberConfig)
-	app.Use(cors.New())
-	app.Use(requestid.New())
-	app.Use(recoverer.New())
-
-	app.Get("/", handler.Health)
-
-	// Authentication routes
-	router.RegisterRoutes(app, authHandler)
-	router.RegisterSwaggerRoutes(app)
-	docs.RegisterDocsRouter(app)
-
-	// Start the server
-	log.Fatal(app.Listen(":8080"))
 }
