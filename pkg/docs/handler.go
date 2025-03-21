@@ -65,7 +65,7 @@ func RegisterDocsRouter(app *fiber.App) {
 
 type RegisterDocsRouterFunc func(app *fiber.App)
 
-// Providers para o Fx
+// RegisterDocsRouterFuncProvider provider for Fx
 func RegisterDocsRouterFuncProvider() RegisterDocsRouterFunc {
 	return RegisterDocsRouter
 }
