@@ -65,15 +65,15 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 func (h *AuthHandler) Register(c fiber.Ctx) error {
 	var req model.CreateUserRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
+		return err
 	}
 
 	user, err := h.authService.Register(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, repository.ErrEmailAlreadyUsed) {
-			return handleError(c, fiber.StatusConflict, "Email already in use")
+			return err
 		}
-		return handleError(c, fiber.StatusInternalServerError, "Failed to register user")
+		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(SuccessResponse{Data: user})

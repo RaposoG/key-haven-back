@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
 	"key-haven-back/pkg/secret"
@@ -31,7 +32,7 @@ func (s *authService) Register(ctx context.Context, request *model.CreateUserReq
 func (s *authService) Login(ctx context.Context, request *model.LoginRequest) (*model.LoginResponse, error) {
 	user, err := s.userService.GetUserByEmail(ctx, request.Email)
 	if err != nil {
-		if err == repository.ErrUserNotFound {
+		if errors.Is(err, repository.ErrUserNotFound) {
 			return nil, repository.ErrInvalidCredentials
 		}
 		return nil, err
