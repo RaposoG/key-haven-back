@@ -153,7 +153,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid request body or validation errors",
+                        "description": "Invalid request body",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrorResponse"
                         }
@@ -175,45 +175,11 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "apierror.APIError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "details": {
-                    "type": "string"
-                },
-                "errors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/apierror.ValidationError"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "apierror.ValidationError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "field": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "handler.ErrorResponse": {
             "type": "object",
             "properties": {
-                "error": {
-                    "$ref": "#/definitions/apierror.APIError"
+                "message": {
+                    "type": "string"
                 }
             }
         },

@@ -1,4 +1,4 @@
-package globalError
+package globalerror
 
 import (
 	"errors"
