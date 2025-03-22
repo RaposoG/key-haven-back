@@ -1,64 +1,53 @@
 package handler
 
 import (
-  "errors"
-  "key-haven-back/internal/model"
-  "key-haven-back/internal/repository"
-  "key-haven-back/internal/service"
-  apierror "key-haven-back/pkg/error"
-  "key-haven-back/pkg/validator"
-  "time"
+	"errors"
+	"key-haven-back/internal/model"
+	"key-haven-back/internal/repository"
+	"key-haven-back/internal/service"
+	"time"
 
-  "github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3"
 )
 
 // ErrorResponse represents an error response
 type ErrorResponse struct {
-  Error *apierror.APIError `json:"error"`
+	Message string `json:"message"`
 }
 
 // SuccessResponse represents a generic success response
 type SuccessResponse struct {
-  Data interface{} `json:"data"`
+	Data interface{} `json:"data"`
 }
 
 // AuthHandler handles authentication requests
 type AuthHandler struct {
-  authService service.AuthService
+	authService service.AuthService
 }
 
 // NewAuthHandler creates a new AuthHandler
 func NewAuthHandler(authService service.AuthService) *AuthHandler {
-  return &AuthHandler{
-    authService: authService,
-  }
+	return &AuthHandler{
+		authService: authService,
+	}
 }
 
 // handleError centralizes error handling
-func handleError(c fiber.Ctx, status int, apiError *apierror.APIError) error {
-  return c.Status(status).JSON(ErrorResponse{
-    Error: apiError,
-  })
-}
-
-// handleValidationError handles validation errors
-func handleValidationError(c fiber.Ctx, statusCode int, validationErrors []apierror.ValidationError) error {
-  return handleError(c, statusCode,
-    apierror.NewAPIError(apierror.ErrorUnprocessableEntity, "Validation failed").
-      WithValidationErrors(validationErrors))
+func handleError(c fiber.Ctx, status int, message string) error {
+	return c.Status(status).JSON(ErrorResponse{Message: message})
 }
 
 // setAuthCookie sets the authentication cookie
 func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
-  c.Cookie(&fiber.Cookie{
-    Name:     "token",
-    Value:    token,
-    Path:     "/",
-    Expires:  time.Now().Add(duration),
-    HTTPOnly: true,
-    Secure:   true,
-    SameSite: "Strict",
-  })
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    token,
+		Path:     "/",
+		Expires:  time.Now().Add(duration),
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "Strict",
+	})
 }
 
 // Register godoc
@@ -69,33 +58,25 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 // @Produce json
 // @Param request body model.CreateUserRequest true "User registration data"
 // @Success 201 {object} SuccessResponse
-// @Failure 400 {object} ErrorResponse "Invalid request body or validation errors"
+// @Failure 400 {object} ErrorResponse "Invalid request body"
 // @Failure 409 {object} ErrorResponse "Email already in use"
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c fiber.Ctx) error {
-  var req model.CreateUserRequest
-  if err := c.Bind().Body(&req); err != nil {
-    return handleError(c, fiber.StatusUnprocessableEntity,
-      apierror.NewAPIError(apierror.ErrorValidation, "Invalid request body"))
-  }
+	var req model.CreateUserRequest
+	if err := c.Bind().Body(&req); err != nil {
+		return err
+	}
 
-  // Validate the request
-  if valid, resErrors := validator.Validate(&req); !valid {
-    return handleValidationError(c, fiber.StatusUnprocessableEntity, resErrors)
-  }
+	user, err := h.authService.Register(c.Context(), &req)
+	if err != nil {
+		if errors.Is(err, repository.ErrEmailAlreadyUsed) {
+			return err
+		}
+		return err
+	}
 
-  user, err := h.authService.Register(c.Context(), &req)
-  if err != nil {
-    if errors.Is(err, repository.ErrEmailAlreadyUsed) {
-      return handleError(c, fiber.StatusConflict,
-        apierror.NewAPIError(apierror.ErrorDuplicateEntry, "Email already used"))
-    }
-    return handleError(c, fiber.StatusInternalServerError,
-      apierror.NewAPIError(apierror.ErrorInternal, "Failed to register user"))
-  }
-
-  return c.Status(fiber.StatusCreated).JSON(SuccessResponse{Data: user})
+	return c.Status(fiber.StatusCreated).JSON(SuccessResponse{Data: user})
 }
 
 // Login godoc
@@ -111,24 +92,21 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c fiber.Ctx) error {
-  var req model.LoginRequest
-  if err := c.Bind().Body(&req); err != nil {
-    return handleError(c, fiber.StatusBadRequest,
-      apierror.NewAPIError(apierror.ErrorValidation, "Invalid request body"))
-  }
+	var req model.LoginRequest
+	if err := c.Bind().Body(&req); err != nil {
+		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
+	}
 
-  response, err := h.authService.Login(c.Context(), &req)
-  if err != nil {
-    if errors.Is(err, repository.ErrInvalidCredentials) {
-      return handleError(c, fiber.StatusUnauthorized,
-        apierror.NewAPIError(apierror.ErrorUnauthorized, "Invalid login"))
-    }
-    return handleError(c, fiber.StatusInternalServerError,
-      apierror.NewAPIError(apierror.ErrorInternal, "Failed to login"))
-  }
+	response, err := h.authService.Login(c.Context(), &req)
+	if err != nil {
+		if errors.Is(err, repository.ErrInvalidCredentials) {
+			return handleError(c, fiber.StatusUnauthorized, "Invalid email or password")
+		}
+		return handleError(c, fiber.StatusInternalServerError, "Failed to process login")
+	}
 
-  setAuthCookie(c, response.Token, 24*time.Hour)
-  return c.Status(fiber.StatusOK).JSON(SuccessResponse{Data: response})
+	setAuthCookie(c, response.Token, 24*time.Hour)
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse{Data: response})
 }
 
 // Logout godoc
@@ -141,8 +119,8 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 // @Security ApiKeyAuth
 // @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c fiber.Ctx) error {
-  setAuthCookie(c, "", -time.Hour) // Expire the cookie
-  return c.Status(fiber.StatusOK).JSON(SuccessResponse{
-    Data: "Logged out successfully",
-  })
+	setAuthCookie(c, "", -time.Hour) // Expire the cookie
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse{
+		Data: "Logged out successfully",
+	})
 }
