@@ -5,6 +5,8 @@ import (
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/service"
+	apierror "key-haven-back/pkg/error"
+	"key-haven-back/pkg/validator"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -12,7 +14,7 @@ import (
 
 // ErrorResponse represents an error response
 type ErrorResponse struct {
-	Message string `json:"message"`
+	Error *apierror.APIError `json:"error"`
 }
 
 // SuccessResponse represents a generic success response
@@ -33,8 +35,17 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 }
 
 // handleError centralizes error handling
-func handleError(c fiber.Ctx, status int, message string) error {
-	return c.Status(status).JSON(ErrorResponse{Message: message})
+func handleError(c fiber.Ctx, status int, apiError *apierror.APIError) error {
+	return c.Status(status).JSON(ErrorResponse{
+		Error: apiError,
+	})
+}
+
+// handleValidationError handles validation errors
+func handleValidationError(c fiber.Ctx, statusCode int, validationErrors []apierror.ValidationError) error {
+	return handleError(c, statusCode,
+		apierror.NewAPIError(apierror.ErrorUnprocessableEntity, "Validation failed").
+			WithValidationErrors(validationErrors))
 }
 
 // setAuthCookie sets the authentication cookie
@@ -56,24 +67,32 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body model.CreateUserRequest true "User registration data"
+// @Param request body apierror.CreateUserRequest true "User registration data"
 // @Success 201 {object} SuccessResponse
-// @Failure 400 {object} ErrorResponse "Invalid request body"
+// @Failure 400 {object} ErrorResponse "Invalid request body or validation errors"
 // @Failure 409 {object} ErrorResponse "Email already in use"
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c fiber.Ctx) error {
 	var req model.CreateUserRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
+		return handleError(c, fiber.StatusUnprocessableEntity,
+			apierror.NewAPIError(apierror.ErrorValidation, "Invalid request body"))
+	}
+
+	// Validate the request
+	if valid, resErrors := validator.Validate(&req); !valid {
+		return handleValidationError(c, fiber.StatusUnprocessableEntity, resErrors)
 	}
 
 	user, err := h.authService.Register(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, repository.ErrEmailAlreadyUsed) {
-			return handleError(c, fiber.StatusConflict, "Email already in use")
+			return handleError(c, fiber.StatusConflict,
+				apierror.NewAPIError(apierror.ErrorDuplicateEntry, "Email already used"))
 		}
-		return handleError(c, fiber.StatusInternalServerError, "Failed to register user")
+		return handleError(c, fiber.StatusInternalServerError,
+			apierror.NewAPIError(apierror.ErrorInternal, "Failed to register user"))
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(SuccessResponse{Data: user})
@@ -85,7 +104,7 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body model.LoginRequest true "User login data"
+// @Param request body apierror.LoginRequest true "User login data"
 // @Success 200 {object} SuccessResponse
 // @Failure 400 {object} ErrorResponse "Invalid request body"
 // @Failure 401 {object} ErrorResponse "Invalid email or password"
@@ -94,15 +113,18 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 func (h *AuthHandler) Login(c fiber.Ctx) error {
 	var req model.LoginRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
+		return handleError(c, fiber.StatusBadRequest,
+			apierror.NewAPIError(apierror.ErrorValidation, "Invalid request body"))
 	}
 
 	response, err := h.authService.Login(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, repository.ErrInvalidCredentials) {
-			return handleError(c, fiber.StatusUnauthorized, "Invalid email or password")
+			return handleError(c, fiber.StatusUnauthorized,
+				apierror.NewAPIError(apierror.ErrorUnauthorized, "Invalid login"))
 		}
-		return handleError(c, fiber.StatusInternalServerError, "Failed to process login")
+		return handleError(c, fiber.StatusInternalServerError,
+			apierror.NewAPIError(apierror.ErrorInternal, "Failed to login"))
 	}
 
 	setAuthCookie(c, response.Token, 24*time.Hour)

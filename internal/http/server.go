@@ -6,6 +6,7 @@ import (
 	"key-haven-back/config"
 	"key-haven-back/internal/handler"
 	"key-haven-back/internal/router"
+	globalerror "key-haven-back/pkg/error"
 	"log"
 
 	"github.com/gofiber/fiber/v3"
@@ -40,9 +41,13 @@ func NewServer(
 	registerSwagger router.RegisterSwaggerRoutesFunc,
 	registerDocs docsPkg.RegisterDocsRouterFunc,
 ) *fiber.App {
-	app := fiber.New()
+	app := fiber.New(
+		fiber.Config{
+			ErrorHandler: globalerror.Handler,
+		})
 
 	// Configure middlewares
+
 	app.Use(cors.New())
 	app.Use(requestid.New())
 	app.Use(recover.New())

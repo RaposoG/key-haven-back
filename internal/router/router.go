@@ -10,7 +10,7 @@ import (
 type RegisterRoutesFunc func(app *fiber.App, authHandler *handler.AuthHandler)
 type RegisterSwaggerRoutesFunc func(app *fiber.App)
 
-// RegisterSwaggerRoutesFunc type of function to register swagger routes
+// RegisterRoutesFuncProvider type of function to register swagger routes
 func RegisterRoutesFuncProvider() RegisterRoutesFunc {
 	return RegisterRoutes
 }

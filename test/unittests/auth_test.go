@@ -57,7 +57,7 @@ func TestAuthHandler_Register(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// Setup
 		mockService := new(MockAuthService)
-		handler := handler.NewAuthHandler(mockService)
+		authHandler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
 		user := &model.User{
@@ -77,7 +77,7 @@ func TestAuthHandler_Register(t *testing.T) {
 			return req.Email == reqBody.Email
 		})).Return(user, nil)
 
-		app.Post("/auth/register", handler.Register)
+		app.Post("/auth/register", authHandler.Register)
 
 		// Execute
 		req := httptest.NewRequest("POST", "/auth/register", bytes.NewReader(jsonBody))
