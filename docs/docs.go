@@ -153,7 +153,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid request body",
+                        "description": "Invalid request body or validation errors",
                         "schema": {
                             "$ref": "#/definitions/handler.ErrorResponse"
                         }
@@ -175,11 +175,45 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "apierror.APIError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/apierror.ValidationError"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "apierror.ValidationError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "field": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.ErrorResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
+                "error": {
+                    "$ref": "#/definitions/apierror.APIError"
                 }
             }
         },
@@ -237,12 +271,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Key Haven API",
-	Description:      "This is the API for Key Haven",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

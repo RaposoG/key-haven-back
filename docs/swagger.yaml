@@ -1,9 +1,30 @@
-basePath: /
 definitions:
-  handler.ErrorResponse:
+  apierror.APIError:
     properties:
+      code:
+        type: string
+      details:
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/apierror.ValidationError'
+        type: array
       message:
         type: string
+    type: object
+  apierror.ValidationError:
+    properties:
+      code:
+        type: string
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  handler.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/apierror.APIError'
     type: object
   handler.ResponseSuccess:
     properties:
@@ -38,12 +59,8 @@ definitions:
     - email
     - password
     type: object
-host: localhost:8080
 info:
   contact: {}
-  description: This is the API for Key Haven
-  title: Key Haven API
-  version: "1.0"
 paths:
   /:
     get:
@@ -133,7 +150,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.SuccessResponse'
         "400":
-          description: Invalid request body
+          description: Invalid request body or validation errors
           schema:
             $ref: '#/definitions/handler.ErrorResponse'
         "409":
