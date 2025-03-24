@@ -14,5 +14,6 @@ var Module = fx.Module(
 			return client.Database("key-haven").Collection("users")
 		},
 		NewUserRepository,
+		NewPasswordRepository,
 	),
 )

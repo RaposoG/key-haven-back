@@ -129,10 +129,10 @@ clean-test-cache:
 # Docker Compose Targets
 
 compose-linux-up:
-	docker compose -f ./setup/docker-compose.linux.yaml up -d
+	docker-compose -f ./setup/docker-compose.linux.yaml up -d
 
 compose-linux-down:
-	docker compose -f ./setup/docker-compose.linux.yaml down
+	docker-compose -f ./setup/docker-compose.linux.yaml down
 
 compose-macos-up:
 	docker compose -f ./setup/docker-compose.macos.yaml up -d

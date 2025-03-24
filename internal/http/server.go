@@ -36,6 +36,7 @@ func StartServer(lc fx.Lifecycle, app *fiber.App, cfg *config.Config) {
 func NewServer(
 	cfg *config.Config,
 	authHandler *handler.AuthHandler,
+	passwordHandler *handler.PasswordHandler,
 	registerRoutes router.RegisterRoutesFunc,
 	registerSwagger router.RegisterSwaggerRoutesFunc,
 	registerDocs docsPkg.RegisterDocsRouterFunc,
@@ -53,7 +54,7 @@ func NewServer(
 	})
 
 	// Register API routes
-	registerRoutes(app, authHandler)
+	registerRoutes(app, authHandler, passwordHandler)
 	registerSwagger(app)
 	registerDocs(app)
 

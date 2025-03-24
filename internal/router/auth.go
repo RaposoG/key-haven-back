@@ -6,9 +6,12 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func RegisterRoutes(app *fiber.App, authHandler *handler.AuthHandler) {
+func RegisterRoutes(app *fiber.App, authHandler *handler.AuthHandler, passwordHandler *handler.PasswordHandler) {
 	auth := app.Group("/auth")
 	auth.Post("/register", authHandler.Register)
 	auth.Post("/login", authHandler.Login)
 	auth.Post("/logout", authHandler.Logout)
+
+	password := app.Group("/password")
+	password.Post("/", passwordHandler.Register)
 }
