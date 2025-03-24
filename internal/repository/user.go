@@ -31,8 +31,9 @@ type MongoUserRepository struct {
 }
 
 // NewUserRepository creates a new user repository with MongoDB implementation
-func NewUserRepository(collection *mongo.Collection) UserRepository {
+func NewUserRepository(database *mongo.Database) UserRepository {
 	// Create the generic repository
+	collection := database.Collection("users")
 	repo := NewMongoRepository[model.User](collection)
 
 	// Create unique index on email field

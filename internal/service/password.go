@@ -11,10 +11,10 @@ type PasswordService interface {
 }
 
 type passwordService struct {
-	repo *repository.MongoPasswordRepository
+	repo repository.PasswordRepository
 }
 
-func NewPasswordService(repo *repository.MongoPasswordRepository) PasswordService {
+func NewPasswordService(repo repository.PasswordRepository) PasswordService {
 	return &passwordService{
 		repo: repo,
 	}

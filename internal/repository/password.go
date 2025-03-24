@@ -32,8 +32,9 @@ func (m *MongoPasswordRepository) Update(ctx context.Context, password *model.Pa
 	panic("unimplemented")
 }
 
-func NewPasswordRepository(collection *mongo.Collection) PasswordRepository {
+func NewPasswordRepository(database *mongo.Database) PasswordRepository {
 	// Create the generic repository
+	collection := database.Collection("passwords")
 	repo := NewMongoRepository[model.Password](collection)
 
 	return &MongoPasswordRepository{

@@ -10,8 +10,8 @@ import (
 var Module = fx.Module(
 	"repository",
 	fx.Provide(
-		func(client database.MongoDBClient) *mongo.Collection {
-			return client.Database("key-haven").Collection("users")
+		func(client database.MongoDBClient) *mongo.Database {
+			return client.Database("key-haven")
 		},
 		NewUserRepository,
 		NewPasswordRepository,
