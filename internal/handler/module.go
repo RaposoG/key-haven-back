@@ -8,5 +8,6 @@ var Module = fx.Module(
 	"handler",
 	fx.Provide(
 		NewAuthHandler,
+		NewPasswordHandler,
 	),
 )

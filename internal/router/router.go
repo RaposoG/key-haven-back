@@ -7,7 +7,7 @@ import (
 )
 
 // RegisterRoutesFunc type of function to register routes
-type RegisterRoutesFunc func(app *fiber.App, authHandler *handler.AuthHandler)
+type RegisterRoutesFunc func(app *fiber.App, authHandler *handler.AuthHandler, passwordHandler *handler.PasswordHandler)
 type RegisterSwaggerRoutesFunc func(app *fiber.App)
 
 // RegisterSwaggerRoutesFunc type of function to register swagger routes
