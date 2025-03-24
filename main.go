@@ -1,18 +1,21 @@
 package main
 
 import (
-	"key-haven-back/config"
-	"key-haven-back/internal/infra/database"
-	"key-haven-back/internal/repository"
-	"key-haven-back/internal/service"
 	"log"
 
+	"key-haven-back/config"
 	_ "key-haven-back/docs"
+	"key-haven-back/internal/handler"
+	"key-haven-back/internal/http"
+	"key-haven-back/internal/infra/database"
+	"key-haven-back/internal/repository"
+	"key-haven-back/internal/router"
+	"key-haven-back/internal/service"
+	"key-haven-back/pkg/docs"
 
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/fx"
-
-	httpapi "key-haven-back/internal/http"
 )
 
 func main() {
@@ -21,21 +24,53 @@ func main() {
 		log.Println("Warning: Error loading .env file")
 	}
 
-	app := fx.New(
-		// Core modules
-		config.Module,
-		database.Module,
+	fxopts := []fx.Option{
+		// config
+		fx.Provide(config.NewConfig),
 
-		// Repository modules
-		repository.Module,
+		// database
+		fx.Provide(
+			database.NewMongoDBClient,
+		),
 
-		// Service modules
-		service.Module,
+		// repository
+		fx.Provide(
+			func(client database.MongoDBClient) *mongo.Database {
+				return client.Database("key-haven")
+			},
+			repository.NewUserRepository,
+			repository.NewPasswordRepository,
+		),
 
-		// HTTP API modules
-		httpapi.Module,
-	)
+		// service
+		fx.Provide(
+			service.NewUserService,
+			service.NewAuthService,
+			service.NewPasswordService,
+		),
 
+		// http
+		fx.Provide(http.NewServer),
+		fx.Invoke(http.StartServer),
+
+		// handler
+		fx.Provide(
+			handler.NewAuthHandler,
+			handler.NewPasswordHandler,
+		),
+
+		// router
+		fx.Provide(
+			router.RegisterRoutesFuncProvider,
+			router.RegisterSwaggerRoutesFuncProvider,
+		),
+
+		// docs
+		fx.Provide(
+			docs.RegisterDocsRouterFuncProvider,
+		),
+	}
+
+	app := fx.New(fxopts...)
 	app.Run()
-
 }
