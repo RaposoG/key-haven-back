@@ -1,13 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is the API for Key Haven",
-        "title": "Key Haven API",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "localhost:8080",
-    "basePath": "/",
     "paths": {
         "/": {
             "get": {

@@ -1,4 +1,4 @@
-package handler
+package globalerror
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func GlobalErrorHandler(c fiber.Ctx, err error) error {
+func Handler(c fiber.Ctx, err error) error {
 	switch {
 	case errors.As(err, &function.TypeValidatorError):
 		return function.ResponseValidatorHandler(c, err)
