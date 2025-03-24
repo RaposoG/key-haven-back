@@ -2,7 +2,6 @@ name: Release
 
 on:
   push:
-    branches: ["chore/add-packages"] # TODO: remove this
     tags:
       - "v*.*.*"
 
