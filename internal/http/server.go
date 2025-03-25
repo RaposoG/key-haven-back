@@ -15,6 +15,8 @@ import (
 	"go.uber.org/fx"
 
 	docsPkg "key-haven-back/pkg/docs"
+	errorHandler "key-haven-back/pkg/error"
+	"key-haven-back/pkg/validator"
 )
 
 func StartServer(lc fx.Lifecycle, app *fiber.App, cfg *config.Config) {
@@ -41,7 +43,13 @@ func NewServer(
 	registerSwagger router.RegisterSwaggerRoutesFunc,
 	registerDocs docsPkg.RegisterDocsRouterFunc,
 ) *fiber.App {
-	app := fiber.New()
+
+	app := fiber.New(
+		fiber.Config{
+			ErrorHandler:    errorHandler.GlobalErrorHandler,
+			StructValidator: validator.NewStructValidator(),
+		},
+	)
 
 	// Configure middlewares
 	app.Use(cors.New())
@@ -50,7 +58,8 @@ func NewServer(
 
 	// Health check route
 	app.Get("/", func(c fiber.Ctx) error {
-		return c.SendString("Key Haven API is running!")
+		var data = fiber.Map{"status": "ok", "message": "Welcome to Key Haven API"}
+		return c.Status(fiber.StatusOK).JSON(data)
 	})
 
 	// Register API routes
