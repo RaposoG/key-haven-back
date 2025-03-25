@@ -20,7 +20,7 @@ type Causes struct {
 }
 
 func ResponseValidatorHandler(c fiber.Ctx, err error) error {
-	var res = response.HttpResponse{Ctx: c}
+	var res = response.HTTPResponse{Ctx: c}
 	var acceptLanguage = c.Get("accept-language", "en")
 	var trans = langs.SetTranslate(acceptLanguage)
 

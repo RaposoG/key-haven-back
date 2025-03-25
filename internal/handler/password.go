@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"key-haven-back/internal/handler/res"
+	"key-haven-back/internal/http/response"
 	"key-haven-back/internal/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -18,6 +18,6 @@ func NewPasswordHandler(passwordService service.PasswordService) *PasswordHandle
 }
 
 func (h *PasswordHandler) Register(ctx fiber.Ctx) error {
-	response := res.HttpResponse{Ctx: ctx}
-	return response.Send(200, "PasswordHandler.Register")
+	response := response.HTTPResponse{Ctx: ctx}
+	return response.Ok("PasswordHandler.Register")
 }

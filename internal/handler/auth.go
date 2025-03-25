@@ -64,7 +64,7 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c fiber.Ctx) error {
-	var res = response.HttpResponse{Ctx: c}
+	var res = response.HTTPResponse{Ctx: c}
 
 	var req model.CreateUserRequest
 	if err := c.Bind().Body(&req); err != nil {

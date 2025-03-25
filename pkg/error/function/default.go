@@ -7,7 +7,7 @@ import (
 )
 
 func ResponseInternalServerErrorHandler(c fiber.Ctx, err error) error {
-	var res = response.HttpResponse{Ctx: c}
+	var res = response.HTTPResponse{Ctx: c}
 	// TODO: Implementar log de erro
 	return res.InternalServerError()
 }

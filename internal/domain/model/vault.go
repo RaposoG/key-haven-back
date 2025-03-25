@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type Valt struct {
+type Vault struct {
 	ID          string `json:"id" bson:"_id"`
 	Name        string `json:"name" bson:"name"`
 	Description string `json:"description" bson:"description"`

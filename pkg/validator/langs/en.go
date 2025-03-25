@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
-	en_translations "github.com/go-playground/validator/v10/translations/en"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 )
 
 func SetLanguageEN() ut.Translator {
@@ -16,7 +16,7 @@ func SetLanguageEN() ut.Translator {
 	if !found {
 		panic("translator not found")
 	}
-	err := en_translations.RegisterDefaultTranslations(validate, trans)
+	err := enTranslations.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
 		panic(err)
 	}

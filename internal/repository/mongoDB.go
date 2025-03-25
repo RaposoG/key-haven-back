@@ -87,7 +87,12 @@ func (r *MongoRepository[T]) Find(ctx context.Context, filter bson.M) ([]T, erro
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Println("Erro ao fechar o cursor:", err)
+		}
+	}()
 
 	var results []T
 	if err := cursor.All(ctx, &results); err != nil {
