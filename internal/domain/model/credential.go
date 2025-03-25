@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Credential struct {
 	ID              string `json:"id" bson:"_id"`
 	Name            string `json:"name" bson:"name"`
@@ -10,6 +12,6 @@ type Credential struct {
 
 	ValtID string `json:"valt_id" bson:"valt_id"`
 
-	CreatedAt string `json:"created_at" bson:"created_at"`
-	UpdatedAt string `json:"updated_at" bson:"updated_at"`
+	CreatedAt time.Time `json:"created_at" bson:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" bson:"updated_at"`
 }

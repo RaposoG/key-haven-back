@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type User struct {
 	ID           string `json:"id" bson:"_id"`
 	Name         string `json:"name" bson:"name"`
@@ -9,6 +11,6 @@ type User struct {
 	TOTPKey       string   `json:"totpKey" bson:"totpKey"`
 	RecoveryCodes []string `json:"recoveryCodes" bson:"recoveryCodes"`
 
-	CreatedAt string `json:"created_at" bson:"created_at"`
-	UpdatedAt string `json:"updated_at" bson:"updated_at"`
+	CreatedAt time.Time `json:"created_at" bson:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" bson:"updated_at"`
 }
