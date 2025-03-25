@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"key-haven-back/internal/http/response"
 	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/service"
@@ -63,20 +64,22 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c fiber.Ctx) error {
+	var res = response.HTTPResponse{Ctx: c}
+
 	var req model.CreateUserRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
+		return err
 	}
 
 	user, err := h.authService.Register(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, repository.ErrEmailAlreadyUsed) {
-			return handleError(c, fiber.StatusConflict, "Email already in use")
+			return res.Message(fiber.StatusConflict, "Email already in use")
 		}
-		return handleError(c, fiber.StatusInternalServerError, "Failed to register user")
+		return res.Message(fiber.StatusInternalServerError, "Failed to process registration")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(SuccessResponse{Data: user})
+	return res.Created(SuccessResponse{Data: user})
 }
 
 // Login godoc

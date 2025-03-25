@@ -129,10 +129,10 @@ clean-test-cache:
 # Docker Compose Targets
 
 compose-linux-up:
-	docker-compose -f ./setup/docker-compose.linux.yaml up -d
+	docker compose -f ./setup/docker-compose.linux.yaml up -d
 
 compose-linux-down:
-	docker-compose -f ./setup/docker-compose.linux.yaml down
+	docker compose -f ./setup/docker-compose.linux.yaml down
 
 compose-macos-up:
 	docker compose -f ./setup/docker-compose.macos.yaml up -d
@@ -141,7 +141,7 @@ compose-macos-down:
 	docker compose -f ./setup/docker-compose.macos.yaml down
 
 compose-setup-dirs:
-	sudo rm -rf ./.docker
-	mkdir -p ./.docker/mongodb
-	sudo chown -R 1001:1001 ./.docker
-	sudo chmod -R 775 ./.docker
+	sudo rm -rf ./setup/.docker
+	mkdir -p ./setup/.docker/mongodb
+	sudo chown -R 1001:1001 ./setup/.docker
+	sudo chmod -R 775 ./setup/.docker
