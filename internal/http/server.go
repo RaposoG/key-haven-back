@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"key-haven-back/config"
-	"key-haven-back/internal/handler"
-	"key-haven-back/internal/router"
+	handler2 "key-haven-back/internal/http/handler"
+	"key-haven-back/internal/http/router"
 	"log"
 
 	"github.com/gofiber/fiber/v3"
@@ -37,8 +37,8 @@ func StartServer(lc fx.Lifecycle, app *fiber.App, cfg *config.Config) {
 
 func NewServer(
 	cfg *config.Config,
-	authHandler *handler.AuthHandler,
-	passwordHandler *handler.PasswordHandler,
+	authHandler *handler2.AuthHandler,
+	passwordHandler *handler2.PasswordHandler,
 	registerRoutes router.RegisterRoutesFunc,
 	registerSwagger router.RegisterSwaggerRoutesFunc,
 	registerDocs docsPkg.RegisterDocsRouterFunc,
