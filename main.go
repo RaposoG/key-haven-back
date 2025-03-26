@@ -1,15 +1,15 @@
 package main
 
 import (
+	handler "key-haven-back/internal/http/handler"
+	"key-haven-back/internal/http/router"
 	"log"
 
 	"key-haven-back/config"
 	_ "key-haven-back/docs"
-	"key-haven-back/internal/handler"
 	"key-haven-back/internal/http"
 	"key-haven-back/internal/infra/database"
 	"key-haven-back/internal/repository"
-	"key-haven-back/internal/router"
 	"key-haven-back/internal/service"
 	"key-haven-back/pkg/docs"
 
