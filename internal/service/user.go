@@ -2,16 +2,17 @@ package service
 
 import (
 	"context"
-	"key-haven-back/internal/model"
+	"key-haven-back/internal/domain/user"
 	"key-haven-back/internal/repository"
+	"key-haven-back/internal/service/dto"
 	"key-haven-back/pkg/secret"
 )
 
 // UserService defines the interface for user-related operations
 type UserService interface {
-	CreateUser(ctx context.Context, request *model.CreateUserRequest) (*model.User, error)
-	GetUserByID(ctx context.Context, id string) (*model.User, error)
-	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
+	CreateUser(ctx context.Context, request *dto.CreateUserRequest) (*user.User, error)
+	GetUserByID(ctx context.Context, id string) (*user.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*user.User, error)
 	UpdatePassword(ctx context.Context, userID, password string) error
 }
 
@@ -28,9 +29,9 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 }
 
 // CreateUser creates a new user with the provided data
-func (s *userService) CreateUser(ctx context.Context, request *model.CreateUserRequest) (*model.User, error) {
+func (s *userService) CreateUser(ctx context.Context, request *dto.CreateUserRequest) (*user.User, error) {
 	// Create user model from request
-	user := model.NewUser(request)
+	user := dto.NewUser(request)
 
 	// Hash the password
 	hashedPassword, err := secret.HashPassword(request.Password)
@@ -50,7 +51,7 @@ func (s *userService) CreateUser(ctx context.Context, request *model.CreateUserR
 }
 
 // GetUserByID retrieves a user by their ID
-func (s *userService) GetUserByID(ctx context.Context, id string) (*model.User, error) {
+func (s *userService) GetUserByID(ctx context.Context, id string) (*user.User, error) {
 	user, err := s.userRepo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -62,7 +63,7 @@ func (s *userService) GetUserByID(ctx context.Context, id string) (*model.User, 
 }
 
 // GetUserByEmail retrieves a user by their email
-func (s *userService) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
+func (s *userService) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
 	return s.userRepo.FindByEmail(ctx, email)
 }
 
