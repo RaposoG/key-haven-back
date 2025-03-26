@@ -1,12 +1,12 @@
 package router
 
 import (
-	handler2 "key-haven-back/internal/http/handler"
+	handler "key-haven-back/internal/http/handler"
 
 	"github.com/gofiber/fiber/v3"
 )
 
-type RegisterRoutesFunc func(app *fiber.App, authHandler *handler2.AuthHandler, passwordHandler *handler2.PasswordHandler)
+type RegisterRoutesFunc func(app *fiber.App, authHandler *handler.AuthHandler, passwordHandler *handler.PasswordHandler)
 type RegisterSwaggerRoutesFunc func(app *fiber.App)
 
 func RegisterRoutesFuncProvider() RegisterRoutesFunc {
