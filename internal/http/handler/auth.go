@@ -3,9 +3,9 @@ package handler
 import (
 	"errors"
 	"key-haven-back/internal/http/response"
-	"key-haven-back/internal/model"
 	"key-haven-back/internal/repository"
 	"key-haven-back/internal/service"
+	"key-haven-back/internal/service/dto"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -57,7 +57,7 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body model.CreateUserRequest true "User registration data"
+// @Param request body dto.CreateUserRequest true "User registration data"
 // @Success 201 {object} SuccessResponse
 // @Failure 400 {object} ErrorResponse "Invalid request body"
 // @Failure 409 {object} ErrorResponse "Email already in use"
@@ -66,7 +66,7 @@ func setAuthCookie(c fiber.Ctx, token string, duration time.Duration) {
 func (h *AuthHandler) Register(c fiber.Ctx) error {
 	var res = response.HTTPResponse{Ctx: c}
 
-	var req model.CreateUserRequest
+	var req dto.CreateUserRequest
 	if err := c.Bind().Body(&req); err != nil {
 		return err
 	}
@@ -88,14 +88,14 @@ func (h *AuthHandler) Register(c fiber.Ctx) error {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param request body model.LoginRequest true "User login data"
+// @Param request body dto.LoginRequest true "User login data"
 // @Success 200 {object} SuccessResponse
 // @Failure 400 {object} ErrorResponse "Invalid request body"
 // @Failure 401 {object} ErrorResponse "Invalid email or password"
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c fiber.Ctx) error {
-	var req model.LoginRequest
+	var req dto.LoginRequest
 	if err := c.Bind().Body(&req); err != nil {
 		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
 	}

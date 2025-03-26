@@ -2,15 +2,16 @@ package service
 
 import (
 	"context"
-	"key-haven-back/internal/model"
+	"key-haven-back/internal/domain/user"
 	"key-haven-back/internal/repository"
+	"key-haven-back/internal/service/dto"
 	"key-haven-back/pkg/secret"
 	"time"
 )
 
 type AuthService interface {
-	Register(ctx context.Context, request *model.CreateUserRequest) (*model.User, error)
-	Login(ctx context.Context, request *model.LoginRequest) (*model.LoginResponse, error)
+	Register(ctx context.Context, request *dto.CreateUserRequest) (*user.User, error)
+	Login(ctx context.Context, request *dto.LoginRequest) (*dto.LoginResponse, error)
 }
 
 type authService struct {
@@ -24,11 +25,11 @@ func NewAuthService(userService UserService) AuthService {
 	}
 }
 
-func (s *authService) Register(ctx context.Context, request *model.CreateUserRequest) (*model.User, error) {
+func (s *authService) Register(ctx context.Context, request *dto.CreateUserRequest) (*user.User, error) {
 	return s.userService.CreateUser(ctx, request)
 }
 
-func (s *authService) Login(ctx context.Context, request *model.LoginRequest) (*model.LoginResponse, error) {
+func (s *authService) Login(ctx context.Context, request *dto.LoginRequest) (*dto.LoginResponse, error) {
 	user, err := s.userService.GetUserByEmail(ctx, request.Email)
 	if err != nil {
 		if err == repository.ErrUserNotFound {
@@ -50,7 +51,7 @@ func (s *authService) Login(ctx context.Context, request *model.LoginRequest) (*
 	user.Password = ""
 
 	// Return login response
-	return &model.LoginResponse{
+	return &dto.LoginResponse{
 		Token: token,
 		User:  *user,
 	}, nil

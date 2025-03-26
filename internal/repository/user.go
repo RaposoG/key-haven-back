@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
-	"key-haven-back/internal/model"
+	"key-haven-back/internal/domain/user"
 	"log"
 	"time"
 
@@ -19,22 +19,22 @@ var (
 
 // UserRepository defines the interface for user-related database operations
 type UserRepository interface {
-	Create(ctx context.Context, user *model.User) error
-	FindByID(ctx context.Context, id string) (*model.User, error)
-	FindByEmail(ctx context.Context, email string) (*model.User, error)
+	Create(ctx context.Context, user *user.User) error
+	FindByID(ctx context.Context, id string) (*user.User, error)
+	FindByEmail(ctx context.Context, email string) (*user.User, error)
 	UpdatePassword(ctx context.Context, userID, hashedPassword string) error
 }
 
 // MongoUserRepository implements UserRepository interface using MongoDB
 type MongoUserRepository struct {
-	repo *MongoRepository[model.User]
+	repo *MongoRepository[user.User]
 }
 
 // NewUserRepository creates a new user repository with MongoDB implementation
 func NewUserRepository(database *mongo.Database) UserRepository {
 	// Create the generic repository
 	collection := database.Collection("users")
-	repo := NewMongoRepository[model.User](collection)
+	repo := NewMongoRepository[user.User](collection)
 
 	// Create unique index on email field
 	err := repo.CreateIndex("email", true)
@@ -48,7 +48,7 @@ func NewUserRepository(database *mongo.Database) UserRepository {
 }
 
 // Create adds a new user to the database
-func (r *MongoUserRepository) Create(ctx context.Context, user *model.User) error {
+func (r *MongoUserRepository) Create(ctx context.Context, user *user.User) error {
 	// Check if email already exists
 	existingUser, err := r.FindByEmail(ctx, user.Email)
 	if err == nil && existingUser != nil {
@@ -68,7 +68,7 @@ func (r *MongoUserRepository) Create(ctx context.Context, user *model.User) erro
 }
 
 // FindByID retrieves a user by their ID
-func (r *MongoUserRepository) FindByID(ctx context.Context, id string) (*model.User, error) {
+func (r *MongoUserRepository) FindByID(ctx context.Context, id string) (*user.User, error) {
 	user, err := r.repo.FindByID(ctx, id, "_id")
 	if err != nil {
 		if err == ErrDocumentNotFound {
@@ -80,7 +80,7 @@ func (r *MongoUserRepository) FindByID(ctx context.Context, id string) (*model.U
 }
 
 // FindByEmail retrieves a user by their email address
-func (r *MongoUserRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+func (r *MongoUserRepository) FindByEmail(ctx context.Context, email string) (*user.User, error) {
 	user, err := r.repo.FindOne(ctx, bson.M{"email": email})
 	if err != nil {
 		if err == ErrDocumentNotFound {
