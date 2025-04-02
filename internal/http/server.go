@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"key-haven-back/config"
-	"key-haven-back/internal/handler"
-	"key-haven-back/internal/router"
+	handler "key-haven-back/internal/http/handler"
+	"key-haven-back/internal/http/router"
 	"log"
 
 	"github.com/gofiber/fiber/v3"

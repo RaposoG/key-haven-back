@@ -5,9 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"key-haven-back/internal/handler"
-	"key-haven-back/internal/model"
+	"key-haven-back/internal/domain/user"
+	"key-haven-back/internal/http/handler"
 	"key-haven-back/internal/repository"
+	"key-haven-back/internal/service/dto"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -32,20 +33,20 @@ type SuccessResponse struct {
 	Data interface{} `json:"data"`
 }
 
-func (m *MockAuthService) Register(ctx context.Context, req *model.CreateUserRequest) (*model.User, error) {
+func (m *MockAuthService) Register(ctx context.Context, req *dto.CreateUserRequest) (*user.User, error) {
 	args := m.Called(ctx, req)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.User), args.Error(1)
+	return args.Get(0).(*user.User), args.Error(1)
 }
 
-func (m *MockAuthService) Login(ctx context.Context, req *model.LoginRequest) (*model.LoginResponse, error) {
+func (m *MockAuthService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error) {
 	args := m.Called(ctx, req)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.LoginResponse), args.Error(1)
+	return args.Get(0).(*dto.LoginResponse), args.Error(1)
 }
 
 func setupApp() *fiber.App {
@@ -60,20 +61,20 @@ func TestAuthHandler_Register(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		user := &model.User{
+		user := &user.User{
 			ID:    "user123",
 			Email: "test@example.com",
 			Name:  "Test",
 		}
 
-		reqBody := model.CreateUserRequest{
+		reqBody := dto.CreateUserRequest{
 			Email:    "test@example.com",
 			Password: "password123",
 			Name:     "Test",
 		}
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *model.CreateUserRequest) bool {
+		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *dto.CreateUserRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(user, nil)
 
@@ -132,7 +133,7 @@ func TestAuthHandler_Register(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		reqBody := model.CreateUserRequest{
+		reqBody := dto.CreateUserRequest{
 			Email:    "existing@example.com",
 			Password: "password123",
 			Name:     "Test",
@@ -140,7 +141,7 @@ func TestAuthHandler_Register(t *testing.T) {
 
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *model.CreateUserRequest) bool {
+		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *dto.CreateUserRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(nil, repository.ErrEmailAlreadyUsed)
 
@@ -169,14 +170,14 @@ func TestAuthHandler_Register(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		reqBody := model.CreateUserRequest{
+		reqBody := dto.CreateUserRequest{
 			Email:    "test@example.com",
 			Password: "password123",
 			Name:     "Test",
 		}
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *model.CreateUserRequest) bool {
+		mockService.On("Register", mock.Anything, mock.MatchedBy(func(req *dto.CreateUserRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(nil, errors.New("database error"))
 
@@ -207,22 +208,22 @@ func TestAuthHandler_Login(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		loginResp := &model.LoginResponse{
+		loginResp := &dto.LoginResponse{
 			Token: "jwt.token.here",
-			User: model.User{
+			User: user.User{
 				ID:    "user123",
 				Email: "test@example.com",
 				Name:  "Test",
 			},
 		}
 
-		reqBody := model.LoginRequest{
+		reqBody := dto.LoginRequest{
 			Email:    "test@example.com",
 			Password: "password123",
 		}
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *model.LoginRequest) bool {
+		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *dto.LoginRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(loginResp, nil)
 
@@ -280,13 +281,13 @@ func TestAuthHandler_Login(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		reqBody := model.LoginRequest{
+		reqBody := dto.LoginRequest{
 			Email:    "test@example.com",
 			Password: "wrongpassword",
 		}
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *model.LoginRequest) bool {
+		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *dto.LoginRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(nil, repository.ErrInvalidCredentials)
 
@@ -315,13 +316,13 @@ func TestAuthHandler_Login(t *testing.T) {
 		handler := handler.NewAuthHandler(mockService)
 		app := setupApp()
 
-		reqBody := model.LoginRequest{
+		reqBody := dto.LoginRequest{
 			Email:    "test@example.com",
 			Password: "password123",
 		}
 		jsonBody, _ := json.Marshal(reqBody)
 
-		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *model.LoginRequest) bool {
+		mockService.On("Login", mock.Anything, mock.MatchedBy(func(req *dto.LoginRequest) bool {
 			return req.Email == reqBody.Email
 		})).Return(nil, errors.New("database error"))
 

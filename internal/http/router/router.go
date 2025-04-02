@@ -1,7 +1,7 @@
 package router
 
 import (
-	"key-haven-back/internal/handler"
+	handler "key-haven-back/internal/http/handler"
 
 	"github.com/gofiber/fiber/v3"
 )
