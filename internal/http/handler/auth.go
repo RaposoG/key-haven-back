@@ -100,7 +100,7 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 		return handleError(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	response, err := h.authService.Login(c.Context(), &req)
+	r, err := h.authService.Login(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, repository.ErrInvalidCredentials) {
 			return handleError(c, fiber.StatusUnauthorized, "Invalid email or password")
@@ -108,8 +108,8 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 		return handleError(c, fiber.StatusInternalServerError, "Failed to process login")
 	}
 
-	setAuthCookie(c, response.Token, 24*time.Hour)
-	return c.Status(fiber.StatusOK).JSON(SuccessResponse{Data: response})
+	setAuthCookie(c, r.Token, 24*time.Hour)
+	return c.Status(fiber.StatusOK).JSON(SuccessResponse{Data: r})
 }
 
 // Logout godoc
