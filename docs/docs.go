@@ -828,7 +828,7 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 12
                 },
                 "url": {
                     "type": "string"

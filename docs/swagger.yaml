@@ -9,7 +9,7 @@ definitions:
       name:
         type: string
       password:
-        minLength: 1
+        minLength: 12
         type: string
       url:
         type: string
